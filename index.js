@@ -1,3 +1,5 @@
+// import platform from './images/platform.png'
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
@@ -112,7 +114,7 @@ function animate() {
     })
 
     if (scrollOffset > 2000) {
-        
+
     }
 }
 

@@ -68,9 +68,10 @@ class Player {
 
   update() {
     this.frames++
-    if (this.frames > 59 && this.currentSprite === this.sprites.stand.right) 
+    if (this.frames > 59 && (this.currentSprite === this.sprites.stand.right || this.currentSprite === this.sprites.stand.left)) 
         this.frames = 0
-    else if (this.frames > 29 && this.currentSprite === this.sprites.run.right)
+    else if (this.frames > 29 && (this.currentSprite === this.sprites.run.right || 
+        this.currentSprite === this.sprites.run.left))
         this.frames = 0
 
     this.draw()
@@ -136,6 +137,7 @@ let platformSmallTallImage = createImage(platformSmallTall)
 let player = new Player()
 let platforms = []
 let genericObject = []
+let lastKey
 
 const keys = {
     right: {
@@ -259,6 +261,34 @@ function animate() {
         player.velocity.y = 0}
     })
 
+    // sprite switching
+    if (
+        keys.right.pressed &&
+        lastKey === 'right' && player.currentSprite !== player.sprites.run.right) {
+        player.frames = 1
+        player.currentSprite = player.sprites.run.right
+        player.currentCropWidth = player.sprites.run.cropWidth
+        player.width = player.sprites.run.width
+    } else if (
+        keys.left.pressed &&
+        lastKey === 'left' && player.currentSprite !== player.sprites.run.left) {
+        player.currentSprite = player.sprites.run.left
+        player.currentCropWidth = player.sprites.run.cropWidth
+        player.width = player.sprites.run.width
+    } else if (
+        !keys.left.pressed &&
+        lastKey === 'left' && player.currentSprite !== player.sprites.stand.left) {
+        player.currentSprite = player.sprites.stand.left
+        player.currentCropWidth = player.sprites.stand.cropWidth
+        player.width = player.sprites.stand.width
+    } else if (
+        !keys.right.pressed &&
+        lastKey === 'right' && player.currentSprite !== player.sprites.stand.right) {
+        player.currentSprite = player.sprites.stand.right
+        player.currentCropWidth = player.sprites.stand.cropWidth
+        player.width = player.sprites.stand.width
+    }
+
     // win condition
     if (scrollOffset > platformImage.width *5 + 300 - 2) {
         console.log('You win!')
@@ -278,15 +308,11 @@ window.addEventListener('keydown', ({ keyCode }) => {
     switch (keyCode) {
         case 65: 
           keys.left.pressed = true
-          player.currentSprite = player.sprites.run.left
-          player.currentCropWidth = player.sprites.run.cropWidth
-          player.width = player.sprites.run.width
+          lastKey = 'left'
           break
         case 68: 
           keys.right.pressed = true
-          player.currentSprite = player.sprites.run.right
-          player.currentCropWidth = player.sprites.run.cropWidth
-          player.width = player.sprites.run.width
+          lastKey = 'right'
           break
         case 87: 
           player.velocity.y -= 15
@@ -300,18 +326,11 @@ window.addEventListener('keyup', ({ keyCode }) => {
     switch (keyCode) {
         case 65: 
           keys.left.pressed = false
-          player.currentSprite = player.sprites.stand.left
-          player.currentCropWidth = player.sprites.stand.cropWidth
-          player.width = player.sprites.stand.width
           break
         case 68: 
           keys.right.pressed = false
-          player.currentSprite = player.sprites.stand.right
-          player.currentCropWidth = player.sprites.stand.cropWidth
-          player.width = player.sprites.stand.width
           break
         case 87: 
-        //   player.velocity.y -= 5
           break
         case 83: 
           break

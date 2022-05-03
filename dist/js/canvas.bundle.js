@@ -271,7 +271,7 @@ var Player = /*#__PURE__*/function () {
     key: "update",
     value: function update() {
       this.frames++;
-      if (this.frames > 59 && this.currentSprite === this.sprites.stand.right) this.frames = 0;else if (this.frames > 29 && this.currentSprite === this.sprites.run.right) this.frames = 0;
+      if (this.frames > 59 && (this.currentSprite === this.sprites.stand.right || this.currentSprite === this.sprites.stand.left)) this.frames = 0;else if (this.frames > 29 && (this.currentSprite === this.sprites.run.right || this.currentSprite === this.sprites.run.left)) this.frames = 0;
       this.draw();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
@@ -351,6 +351,7 @@ var platformSmallTallImage = createImage(_images_platformSmallTall_png__WEBPACK_
 var player = new Player();
 var platforms = [];
 var genericObject = [];
+var lastKey;
 var keys = {
   right: {
     pressed: false
@@ -448,7 +449,27 @@ function animate() {
     if (player.position.y + player.height <= platform.position.y && player.position.y + player.height + player.velocity.y >= platform.position.y && player.position.x + player.width >= platform.position.x && player.position.x <= platform.position.x + platform.width) {
       player.velocity.y = 0;
     }
-  }); // win condition
+  }); // sprite switching
+
+  if (keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.run.right) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.right;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
+  } else if (keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.run.left) {
+    player.currentSprite = player.sprites.run.left;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
+  } else if (!keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.stand.left) {
+    player.currentSprite = player.sprites.stand.left;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
+  } else if (!keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.stand.right) {
+    player.currentSprite = player.sprites.stand.right;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
+  } // win condition
+
 
   if (scrollOffset > platformImage.width * 5 + 300 - 2) {
     console.log('You win!');
@@ -469,16 +490,12 @@ window.addEventListener('keydown', function (_ref3) {
   switch (keyCode) {
     case 65:
       keys.left.pressed = true;
-      player.currentSprite = player.sprites.run.left;
-      player.currentCropWidth = player.sprites.run.cropWidth;
-      player.width = player.sprites.run.width;
+      lastKey = 'left';
       break;
 
     case 68:
       keys.right.pressed = true;
-      player.currentSprite = player.sprites.run.right;
-      player.currentCropWidth = player.sprites.run.cropWidth;
-      player.width = player.sprites.run.width;
+      lastKey = 'right';
       break;
 
     case 87:
@@ -495,20 +512,13 @@ window.addEventListener('keyup', function (_ref4) {
   switch (keyCode) {
     case 65:
       keys.left.pressed = false;
-      player.currentSprite = player.sprites.stand.left;
-      player.currentCropWidth = player.sprites.stand.cropWidth;
-      player.width = player.sprites.stand.width;
       break;
 
     case 68:
       keys.right.pressed = false;
-      player.currentSprite = player.sprites.stand.right;
-      player.currentCropWidth = player.sprites.stand.cropWidth;
-      player.width = player.sprites.stand.width;
       break;
 
     case 87:
-      //   player.velocity.y -= 5
       break;
 
     case 83:

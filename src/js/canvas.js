@@ -1,6 +1,7 @@
 import platform from '../images/platform.png'
 import hills from '../images/hills.png'
 import background from '../images/background.png'
+import platformSmallTall from '../images/platformSmallTall.png'
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
@@ -12,6 +13,7 @@ const gravity = 0.5
 
 class Player {
   constructor() {
+    this.speed = 5
     this.position = {
         x: 100,
         y: 100
@@ -88,35 +90,11 @@ function createImage(imageSrc) {
 }
 
 let platformImage = createImage(platform)
+let platformSmallTallImage = createImage(platformSmallTall)
 
 let player = new Player()
-let platforms = [new Platform({
-    x: -1, 
-    y: 470,
-    image: platformImage
-}), new Platform({
-    x: platformImage.width - 3, 
-    y: 470,
-    image: platformImage
-}), new Platform({
-    x: platformImage.width *2 + 120, 
-    y: 470,
-    image: platformImage
-})
-]
-
-let genericObject = [
-    new GenericObject({
-        x: -1,
-        y: -1,
-        image: createImage(background)
-    }),
-    new GenericObject({
-        x: -1,
-        y: -1,
-        image: createImage(hills)
-    })
-]
+let platforms = []
+let genericObject = []
 
 const keys = {
     right: {
@@ -133,19 +111,42 @@ function init() {
     platformImage = createImage(platform)
 
     player = new Player()
-    platforms = [new Platform({
-        x: -1, 
-        y: 470,
-        image: platformImage
-    }), new Platform({
-        x: platformImage.width - 3, 
-        y: 470,
-        image: platformImage
-    }), new Platform({
-        x: platformImage.width *2 + 120, 
-        y: 470,
-        image: platformImage
-    })
+    platforms = [
+        new Platform({
+            x: platformImage.width *4 + 300 - 2 + platformImage.width - platformSmallTallImage.width, 
+            y: 270,
+            image: createImage(platformSmallTall)
+        }),
+        new Platform({
+            x: -1, 
+            y: 470,
+            image: platformImage
+        }), 
+        new Platform({
+            x: platformImage.width - 3, 
+            y: 470,
+            image: platformImage
+        }), 
+        new Platform({
+            x: platformImage.width *2 + 120, 
+            y: 470,
+            image: platformImage
+        }), 
+        new Platform({
+            x: platformImage.width *3 + 300, 
+            y: 470,
+            image: platformImage
+        }), 
+        new Platform({
+            x: platformImage.width *4 + 300 - 2, 
+            y: 470,
+            image: platformImage
+        }), 
+        new Platform({
+            x: platformImage.width *5 + 650 - 2, 
+            y: 470,
+            image: platformImage
+        }), 
     ]
 
     genericObject = [
@@ -165,8 +166,6 @@ function init() {
 
 }
 
-
-
 function animate() {
     requestAnimationFrame(animate)
     c.fillStyle = 'white'
@@ -183,27 +182,27 @@ function animate() {
 
     // move keys 'a' and 'd'
     if (keys.right.pressed && player.position.x < 400) {
-        player.velocity.x = 5
+        player.velocity.x = player.speed
     } else if (keys.left.pressed && player.position.x > 100) {
-        player.velocity.x = -5
+        player.velocity.x = -player.speed
     } else {
         player.velocity.x = 0
 
         if (keys.right.pressed) {
-            scrollOffset += 5
+            scrollOffset += player.speed
             platforms.forEach((platform) => {
-                platform.position.x -= 5
+                platform.position.x -= player.speed
             })
             genericObject.forEach(genericObject => {
-                genericObject.position.x -= 3
+                genericObject.position.x -= player.speed * .66
             })
         } else if (keys.left.pressed) {
-            scrollOffset -= 5
+            scrollOffset -= player.speed
             platforms.forEach((platform) => {
-                platform.position.x += 5
+                platform.position.x += player.speed
             })
             genericObject.forEach(genericObject => {
-                genericObject.position.x += 3
+                genericObject.position.x += player.speed * .66
             })
         }
     }
@@ -219,7 +218,7 @@ function animate() {
     })
 
     // win condition
-    if (scrollOffset > 2000) {
+    if (scrollOffset > platformImage.width *5 + 300 - 2) {
         console.log('You win!')
     }
 
@@ -230,6 +229,7 @@ function animate() {
     }
 }
 
+init()
 animate()
 
 window.addEventListener('keydown', ({ keyCode }) => {
@@ -241,7 +241,7 @@ window.addEventListener('keydown', ({ keyCode }) => {
           keys.right.pressed = true
           break
         case 87: 
-          player.velocity.y -= 20
+          player.velocity.y -= 15
           break
         case 83: 
           break

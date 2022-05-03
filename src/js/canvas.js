@@ -3,6 +3,11 @@ import hills from '../images/hills.png'
 import background from '../images/background.png'
 import platformSmallTall from '../images/platformSmallTall.png'
 
+import spriteRunLeft from '../images/spriteRunLeft.png'
+import spriteRunRight from '../images/spriteRunRight.png'
+import spriteStandLeft from '../images/spriteStandLeft.png'
+import spriteStandRight from '../images/spriteStandRight.png'
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
@@ -23,12 +28,24 @@ class Player {
         y: 1
     }
 
-    this.width = 30
-    this.height = 30
+    this.width = 66
+    this.height = 150
+    
+    this.image = createImage(spriteStandRight)
   }
+
   draw() {
-      c.fillStyle = 'red'
-      c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    c.drawImage(
+        this.image,
+        0,
+        0,
+        177,
+        400,
+        this.position.x,
+        this.position.y,
+        this.width,
+        this.height
+        )
   }
 
   update() {
